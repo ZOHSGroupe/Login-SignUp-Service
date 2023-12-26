@@ -1,75 +1,62 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
-const Role = db.role;
-
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const crypto = require('crypto');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+  // Check if required fields are present in the request body
+  if (!req.body.id_sql || !req.body.email || !req.body.role || !req.body.cin || !req.body.password) {
+    return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
+  }
+  // Encrypt : if i you hqve return a real id_sql sended
+  const cipher = crypto.createCipher('aes-256-cbc', process.env.SECRET_CRYPTO);
+  let id_sql = cipher.update(req.body.id_sql, 'utf-8', 'hex');
+  id_sql += cipher.final('hex');
   const user = new User({
-    username: req.body.username,
+    id_sql: id_sql,
     email: req.body.email,
+    role: req.body.role,
+    cin:bcrypt.hashSync(req.body.cin, 8),
     password: bcrypt.hashSync(req.body.password, 8)
   });
 
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
-      return;
+      console.error('Error:', err);
+      return res.status(500).send({ message: 'Internal Server Error' });
     }
+    // Decrypt
+    const decipher = crypto.createDecipher('aes-256-cbc', process.env.SECRET_CRYPTO);
+    let id_sql = decipher.update(user.id_sql, 'hex', 'utf-8');
+    id_sql += decipher.final('utf-8');
+    const token = jwt.sign({ id_sql:id_sql }, process.env.SECRET_JWT, {
+      algorithm: 'HS256',
+      allowInsecureKeySizes: true,
+      expiresIn: 86400, // 24 hours
+    });
 
-    if (req.body.roles) {
-      Role.find(
-        {
-          name: { $in: req.body.roles }
-        },
-        (err, roles) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          user.roles = roles.map(role => role._id);
-          user.save(err => {
-            if (err) {
-              res.status(500).send({ message: err });
-              return;
-            }
-
-            res.send({ message: "User was registered successfully!" });
-          });
-        }
-      );
-    } else {
-      Role.findOne({ name: "user" }, (err, role) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        user.roles = [role._id];
-        user.save(err => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          res.send({ message: "User was registered successfully!" });
-        });
-      });
-    }
+    res.status(200).send({
+      token: token
+    });
   });
 };
 
+
+
 exports.signin = (req, res) => {
+  // Check if required fields are present in the request body
+  if (!req.body.email|| !req.body.password) {
+    return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
+  }
   User.findOne({
-    username: req.body.username
+    email: req.body.email
   })
-    .populate("roles", "-__v")
+    //.populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
-        res.status(500).send({ message: err });
+        res.status(500).send({ message : err });
         return;
       }
 
@@ -84,30 +71,24 @@ exports.signin = (req, res) => {
 
       if (!passwordIsValid) {
         return res.status(401).send({
-          accessToken: null,
+          token: null,
           message: "Invalid Password!"
         });
       }
-
-      const token = jwt.sign({ id: user.id },
-                              config.secret,
+      // Decrypt
+      const decipher = crypto.createDecipher('aes-256-cbc', config.secret);
+      let id_sql = decipher.update(user.id_sql, 'hex', 'utf-8');
+      id_sql += decipher.final('utf-8');
+      const token = jwt.sign({ id_sql:id_sql },
+                              process.env.SECRET_JWT,
                               {
                                 algorithm: 'HS256',
                                 allowInsecureKeySizes: true,
                                 expiresIn: 86400, // 24 hours
                               });
 
-      var authorities = [];
-
-      for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-      }
       res.status(200).send({
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        roles: authorities,
-        accessToken: token
+        token: token
       });
     });
 };
