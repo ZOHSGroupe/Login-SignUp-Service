@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
   // Check if required fields are present in the request body
-  if (!req.body.id_sql || !req.body.email || !req.body.role || !req.body.cin || !req.body.password) {
+  if (!req.body.id_sql || !req.body.email || !req.body.role || !req.body.nationalId || !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
   }
   // Encrypt : if i you hqve return a real id_sql sended
@@ -18,7 +18,7 @@ exports.signup = (req, res) => {
     id_sql: id_sql,
     email: req.body.email,
     role: req.body.role,
-    cin:bcrypt.hashSync(req.body.cin, 8),
+    nationalId:bcrypt.hashSync(req.body.nationalId, 8),
     password: bcrypt.hashSync(req.body.password, 8)
   });
 

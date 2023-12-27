@@ -7,7 +7,7 @@ const User = mongoose.model(
     email: String,
     password: String,
     role: String,
-    cin: String
+    nationalId: String
   })
 );
 
