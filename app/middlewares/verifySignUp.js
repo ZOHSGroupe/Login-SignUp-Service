@@ -22,7 +22,7 @@ const checkDuplicateEmailOrCin = (req, res, next) => {
       }
 
       if (cinUser) {
-        return res.status(400).send({token:null, message: "Failed! Cin is already in use!" });
+        return res.status(400).send({message: "Failed! NationalId is already in use!" });
       }
 
       // Call next middleware or route handler if email and Cin are not duplicate
