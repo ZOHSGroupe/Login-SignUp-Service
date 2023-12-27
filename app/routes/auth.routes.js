@@ -13,4 +13,5 @@ module.exports = function(app) {
   app.post("/auth/signup",verifySignUp.checkDuplicateEmailOrCin,controller.signup);
 
   app.post("/auth/signin", controller.signin);
+  app.post("/auth/change-password", controller.changePassword);
 };

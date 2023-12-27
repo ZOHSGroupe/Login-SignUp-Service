@@ -93,3 +93,45 @@ exports.signin = (req, res) => {
       });
     });
 };
+
+exports.changePassword = (req, res) => {
+  const { email, oldPassword, newPassword } = req.body;
+
+  // Check if required fields are present in the request body
+  if (!email || !oldPassword || !newPassword) {
+    return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
+  }
+
+  // Find the user by email
+  User.findOne({ email: email }, (err, user) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+
+    // Verify the old password
+    const passwordIsValid = bcrypt.compareSync(oldPassword, user.password);
+
+    if (!passwordIsValid) {
+      return res.status(401).send({ message: "Invalid Old Password!" });
+    }
+
+    // Update the password with the new one
+    user.password = bcrypt.hashSync(newPassword, 8);
+
+    // Save the user with the updated password
+    user.save((err, updatedUser) => {
+      if (err) {
+        console.error('Error:', err);
+        return res.status(500).send({ message: 'Internal Server Error' });
+      }
+
+      res.status(200).send({ message: "Password changed successfully." });
+    });
+  });
+};
