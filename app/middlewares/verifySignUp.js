@@ -14,7 +14,7 @@ const checkDuplicateEmailOrCin = (req, res, next) => {
     if (emailUser) {
       return res.status(400).send({token:null, message: "Failed! Email is already in use!" });
     }
-    const cin=bcrypt.hashSync(req.body.cin, 8);
+    const cin=bcrypt.hashSync(req.body.nationalId, 8);
     // Check for duplicate Cin
     User.findOne({ cin }).exec((cinErr, cinUser) => {
       if (cinErr) {
