@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 require("./app/routes/auth.routes")(app);
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.NODE_LOCAL_PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
