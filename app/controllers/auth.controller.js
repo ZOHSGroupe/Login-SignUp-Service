@@ -27,6 +27,7 @@ exports.signup = (req, res) => {
       console.error('Error:', err);
       return res.status(500).send({ message: 'Internal Server Error' });
     }
+    /*
     // Decrypt
     const decipher = crypto.createDecipher('aes-256-cbc', process.env.SECRET_CRYPTO);
     let id_sql = decipher.update(user.id_sql, 'hex', 'utf-8');
@@ -36,9 +37,9 @@ exports.signup = (req, res) => {
       allowInsecureKeySizes: true,
       expiresIn: 86400, // 24 hours
     });
-
+    */
     res.status(200).send({
-      token: token
+      message: user.role+" enregsterid successsully"
     });
   });
 };

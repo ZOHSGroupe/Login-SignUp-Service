@@ -1,5 +1,13 @@
+require('dotenv').config();
+const {
+  DB_USER,
+  DB_PASSWORD,
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+} = process.env;
+
 module.exports = {
-  HOST: process.env.MONGODB_HOST || 'localhost',
-  PORT: process.env.MONGODB_PORT,
-  DB: process.env.MONGODB_DATABASE || "assurance_db"
+  url: `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`
+  //url: `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`
 };
