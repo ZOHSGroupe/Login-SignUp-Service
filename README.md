@@ -91,4 +91,4 @@ Ensure to set the following environment variables:
 
 ## License
 
-Auth-Service is [MIT licensed](LICENSE).
+Auth-Service is [GPL licensed](LICENSE).
