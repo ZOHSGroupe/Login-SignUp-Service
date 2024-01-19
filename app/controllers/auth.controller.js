@@ -7,7 +7,7 @@ const bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
   // Check if required fields are present in the request body
-  if (!req.body.id_sql || !req.body.email || !req.body.role || !req.body.nationalId || !req.body.password) {
+  if (!req.body.id_sql || !req.body.email || !req.body.username || !req.body.nationalId || !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
   }
   // Encrypt : if i you hqve return a real id_sql sended
@@ -17,7 +17,7 @@ exports.signup = (req, res) => {
   const user = new User({
     id_sql: id_sql,
     email: req.body.email,
-    role: req.body.role,
+    username: req.body.username,
     nationalId:bcrypt.hashSync(req.body.nationalId, 8),
     password: bcrypt.hashSync(req.body.password, 8)
   });
@@ -48,12 +48,15 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
   // Check if required fields are present in the request body
-  if (!req.body.email|| !req.body.password) {
+  if (!req.body.emailOrEmail|| !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
   }
   User.findOne({
-    email: req.body.email
-  })
+      $or: [
+        { email: req.body.emailOrEmail },
+        { username: req.body.emailOrEmail }
+      ]
+    })
     //.populate("roles", "-__v")
     .exec((err, user) => {
       if (err) {
