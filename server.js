@@ -3,9 +3,9 @@ const cors = require("cors");
 const dbConfig = require("./app/config/db.config");
 require('dotenv').config();
 const app = express();
-
+const routes=require('./app/routes/auth.routes');
 var corsOptions = {
-  origin: []
+  origin: "*"
 };
 
 app.use(cors(corsOptions));
@@ -32,13 +32,10 @@ db.mongoose
     process.exit();
   });
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
+
 
 // routes
-require("./app/routes/auth.routes")(app);
+routes(app);
 
 // set port, listen for requests
 const PORT = process.env.NODE_LOCAL_PORT || 8000;

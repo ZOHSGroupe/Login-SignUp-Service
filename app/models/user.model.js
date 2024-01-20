@@ -6,7 +6,7 @@ const User = mongoose.model(
     id_sql: String,
     email: String,
     password: String,
-    role: String,
+    username: String,
     nationalId: String
   })
 );
