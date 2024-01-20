@@ -38,7 +38,7 @@ $ docker compose up
 - **Request Body:**
   - `id_sql: String` - The user's ID.
   - `email: String` - The user's email address.
-  - `role: String` - The user's role.
+  - `username: String` - The user's role.
   - `nationalId: String` - The user's national ID.
   - `password: String` - The user's password.
 - **Response:**
