@@ -12,9 +12,9 @@ const routes = (app) => {
   app.get("/", (req, res) => {
     res.json({ message: "Welcome to bezkoder application." });
   });
-  app.post("/auth/signup",verifySignUp.checkDuplicateEmailOrCin,controller.signup);
+  app.post("/auth/signin",verifySignUp.checkDuplicateEmailOrCin,controller.signin);
 
-  app.post("/auth/signin", controller.signin);
+  app.post("/auth/signup", controller.signup);
   app.post("/auth/change-password",authJwt.verifyToken, controller.changePassword);
 };
 

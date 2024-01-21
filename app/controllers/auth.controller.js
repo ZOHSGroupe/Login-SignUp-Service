@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
+exports.signin = (req, res) => {
   // Check if required fields are present in the request body
   if (!req.body.id_sql || !req.body.email || !req.body.username || !req.body.nationalId || !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
@@ -46,7 +46,7 @@ exports.signup = (req, res) => {
 
 
 
-exports.signin = (req, res) => {
+exports.signup = (req, res) => {
   // Check if required fields are present in the request body
   if (!req.body.emailOrUsername|| !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
