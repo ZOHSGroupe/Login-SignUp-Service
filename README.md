@@ -36,7 +36,7 @@ $ docker compose up
 - **Method:** POST
 - **Description:** Register a new user.
 - **Request Body:**
-  - `id_sql: String` - The user's ID.
+  - `idSql: String` - The user's ID.
   - `email: String` - The user's email address.
   - `username: String` - The user's role.
   - `nationalId: String` - The user's national ID.

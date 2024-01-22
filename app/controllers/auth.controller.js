@@ -7,15 +7,15 @@ const bcrypt = require("bcryptjs");
 
 exports.signin = (req, res) => {
   // Check if required fields are present in the request body
-  if (!req.body.id_sql || !req.body.email || !req.body.username || !req.body.nationalId || !req.body.password) {
+  if (!req.body.idSql || !req.body.email || !req.body.username || !req.body.nationalId || !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
   }
-  // Encrypt : if i you hqve return a real id_sql sended
+  // Encrypt : if i you hqve return a real idSql sended
   const cipher = crypto.createCipher('aes-256-cbc', process.env.SECRET_CRYPTO);
-  let id_sql = cipher.update(req.body.id_sql, 'utf-8', 'hex');
-  id_sql += cipher.final('hex');
+  let idSql = cipher.update(req.body.idSql, 'utf-8', 'hex');
+  idSql += cipher.final('hex');
   const user = new User({
-    id_sql: id_sql,
+    idSql: idSql,
     email: req.body.email,
     username: req.body.username,
     nationalId:bcrypt.hashSync(req.body.nationalId, 8),
@@ -30,9 +30,9 @@ exports.signin = (req, res) => {
     /*
     // Decrypt
     const decipher = crypto.createDecipher('aes-256-cbc', process.env.SECRET_CRYPTO);
-    let id_sql = decipher.update(user.id_sql, 'hex', 'utf-8');
-    id_sql += decipher.final('utf-8');
-    const token = jwt.sign({ id_sql:id_sql }, process.env.SECRET_JWT, {
+    let idSql = decipher.update(user.idSql, 'hex', 'utf-8');
+    idSql += decipher.final('utf-8');
+    const token = jwt.sign({ idSql:idSql }, process.env.SECRET_JWT, {
       algorithm: 'HS256',
       allowInsecureKeySizes: true,
       expiresIn: 86400, // 24 hours
@@ -81,9 +81,9 @@ exports.signup = (req, res) => {
       }
       // Decrypt
       const decipher = crypto.createDecipher('aes-256-cbc', config.secret);
-      let id_sql = decipher.update(user.id_sql, 'hex', 'utf-8');
-      id_sql += decipher.final('utf-8');
-      const token = jwt.sign({ id_sql:id_sql },
+      let idSql = decipher.update(user.idSql, 'hex', 'utf-8');
+      idSql += decipher.final('utf-8');
+      const token = jwt.sign({ idSql:idSql },
                               process.env.SECRET_JWT,
                               {
                                 algorithm: 'HS256',
