@@ -75,6 +75,32 @@ $ docker compose up
   - `401`: Unauthorized - Invalid Old Password or User Not found.
   - `500`: Internal Server Error.
 
+### 4. Exist by email
+
+- **Endpoint:** `/auth/exist-email`
+- **Method:** POST
+- **Description:** Verify if user with email exist.
+- **Request Body:**
+  - `email: String` - The user's email address.
+- **Response:**
+  - `200`: User Found.
+  - `404`: User Not Found.
+  - `500`: Internal Server Error.
+
+
+### 4. Exist by nationale ID
+
+- **Endpoint:** `/auth/exist-national-id`
+- **Method:** POST
+- **Description:** Verify if user with email national id.
+- **Request Body:**
+  - `nationalId: String` - The user's national ID.
+- **Response:**
+  - `200`: User Found.
+  - `404`: User Not Found.
+  - `500`: Internal Server Error.
+
+
 ## Configuration
 
 Ensure to set the following environment variables:

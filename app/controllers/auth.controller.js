@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-exports.signin = (req, res) => {
+exports.signup = (req, res) => {
   // Check if required fields are present in the request body
   if (!req.body.idSql || !req.body.email || !req.body.username || !req.body.nationalId || !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
@@ -46,7 +46,7 @@ exports.signin = (req, res) => {
 
 
 
-exports.signup = (req, res) => {
+exports.signin = (req, res) => {
   // Check if required fields are present in the request body
   if (!req.body.emailOrUsername|| !req.body.password) {
     return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
@@ -93,6 +93,56 @@ exports.signup = (req, res) => {
 
       res.status(200).send({
         token: token
+      });
+    });
+};
+
+exports.existByEmail = (req, res) => {
+  // Check if required fields are present in the request body
+  if (!req.body.email) {
+    return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
+  }
+  User.findOne({
+      email: req.body.email
+  })
+    //.populate("roles", "-__v")
+    .exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message : err });
+        return;
+      }
+
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+      res.status(200).send({
+        message: "User Found"
+      });
+    });
+};
+
+
+exports.existByNationalId = (req, res) => {
+  // Check if required fields are present in the request body
+  if (!req.body.nationalId) {
+    return res.status(400).send({ message: 'Bad Request: Missing required fields in the request body.' });
+  }
+  
+  User.findOne({
+    nationalId: bcrypt.hashSync(req.body.nationalId, 8)
+  })
+    //.populate("roles", "-__v")
+    .exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message : err });
+        return;
+      }
+
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
+      res.status(200).send({
+        message: "User Found"
       });
     });
 };
