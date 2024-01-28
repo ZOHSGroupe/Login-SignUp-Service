@@ -10,7 +10,7 @@ const routes = (app) => {
   });
   // simple route
   app.get("/", (req, res) => {
-    res.json({ message: "Welcome to bezkoder application." });
+    res.json({ message: "Welcome to auth service application." });
   });
   app.post("/auth/signup",verifySignUp.checkDuplicateEmailOrCin,controller.signup);
 //sign in ==login
